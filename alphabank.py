@@ -29,7 +29,6 @@ class App:
                 self.user_wants_to_exit = True
 
             else :
-                print(self.Database.users)
                 print('Procedure not found, please try again. (Type "help" to see all available procedures)')
     
     def register(self):
