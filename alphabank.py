@@ -18,16 +18,12 @@ class App:
             procedure = input('\n$  ')
             if procedure == 'help':
                 App.help()
-
             elif procedure == 'register':
                 self.register()
-            
             elif procedure == 'login':
                 self.login()
-
             elif procedure == 'exit':
                 self.user_wants_to_exit = True
-
             else :
                 print('Procedure not found, please try again. (Type "help" to see all available procedures)')
     
@@ -36,9 +32,7 @@ class App:
         email = input('Your email:  ')
         password = input('Your password: ')
         client = Client(name)
-
         self.Database.register_user(client, Account(client, 0), email, password)
-
         print('\nWelcome to Alphabank, {}'.format(client.name))
         
         return True
@@ -46,11 +40,9 @@ class App:
     def login(self):
         email = input('Your e-mail:  ')
         password = input('Your password:  ')
-
         try :
             self.logged_user = self.Database.get_user(email, password)
             print('Welcome, {}'.format(self.logged_user['client'].name))
-        
         except Exception as e:
             print(e)
 
