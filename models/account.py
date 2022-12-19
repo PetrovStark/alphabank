@@ -1,10 +1,10 @@
 class Account:
     total_accounts = 0
 
-    def __init__(self, Client, amount):
+    def __init__(self, User, amount):
         Account.total_accounts += 1
         self.__id = Account.total_accounts
-        self.__Client = Client
+        self.__User = User
         self.__amount = float(amount)
          
     @property

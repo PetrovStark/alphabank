@@ -4,5 +4,5 @@ A simple abstraction of a bank system, created for my object-oriented programmin
 
 ## How to use
 ```shell
-$ python3 alphabank.py
+$ python3 app.py
 ```
