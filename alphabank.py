@@ -22,6 +22,10 @@ class App:
                 self.register()
             elif procedure == 'login':
                 self.login()
+            elif procedure == 'deposit':
+                self.deposit()
+            elif procedure == 'withdraw':
+                self.withdraw()
             elif procedure == 'exit':
                 self.user_wants_to_exit = True
             else :
@@ -45,10 +49,44 @@ class App:
             print('Welcome, {}'.format(self.logged_user['client'].name))
         except Exception as e:
             print(e)
+        
+    def deposit(self):
+        amount = 0
+        try:
+            self.__user_is_logged_in()
+            amount = input('Type the amount in U$ Dollars:  ')
+            self.logged_user['account'].deposit(amount)
+        except Exception as e:
+            print(e)
+            return False
+        
+        print('You successfully deposited U${} to your account.'.format(amount))
+
+        return True
+    
+    def withdraw(self):
+        amount = 0
+        try:
+            self.__user_is_logged_in()
+            amount = input('Type the amount in U$ Dollars:  ')
+            self.logged_user['account'].withdraw(amount)
+        except Exception as e:
+            print(e)
+            return False
+        
+        print('You successfully withdrew U${} to your account.'.format(amount))
+        
+        return True
+
+    def __user_is_logged_in(self):
+        if not bool(self.logged_user):
+            raise Exception('You must have been logged in to make this action. Type "login" command.')
+        
+        return True
 
     @staticmethod
     def help():
-        procedures = [func for func in dir(App) if callable(getattr(App, func)) and not func.startswith("__")]
+        procedures = [func for func in dir(App) if callable(getattr(App, func)) and not func.startswith("_")]
         procedures.remove('run') # Removing the method responsible for running the application.
         procedures.append('exit') # Adding the exit procedure, which not has a method.
         print(procedures)
