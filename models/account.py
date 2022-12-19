@@ -1,3 +1,4 @@
+import locale
 class Account:
     total_accounts = 0
 
@@ -10,6 +11,9 @@ class Account:
     @property
     def id(self):
         return self.__id
+    
+    def extract(self):
+        return 'Actual amount: {}'.format(self.__format_amount(self.__amount))
     
     def deposit(self, amount):
         amount = float(amount)
@@ -27,3 +31,8 @@ class Account:
             raise Exception('Transaction not authorized, you can only withdraw values greater than US$0')
         
         self.__amount -= amount
+    
+    @staticmethod
+    def __format_amount(amount):
+        locale.setlocale( locale.LC_ALL, 'en_US.utf-8' )
+        return locale.currency(amount)
