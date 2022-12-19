@@ -26,6 +26,7 @@ class App:
 
             if procedure == 'exit':
                 self.__user_wants_to_exit = True
+                continue
             
             try:
                 self.Controller.execute_procedure(procedure)

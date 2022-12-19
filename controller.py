@@ -38,11 +38,8 @@ class Controller(object):
 
         email = input('Your e-mail:  ')
         password = input('Your password:  ')
-        try:
-            self.App.user = User.login(email, password)
-            print('Hi, {}!'.format(self.App.user.name))
-        except Exception as e:
-            print(e)
+        self.App.user = User.login(email, password)
+        print('Hi, {}!'.format(self.App.user.name))
         
     def logout(self):
         self.App.is_authenticated()
@@ -51,31 +48,17 @@ class Controller(object):
 
     def deposit(self):
         amount = 0
-        try:
-            self.App.is_authenticated()
-            amount = input('Type the amount in U$ Dollars:  ')
-            self.App.user.account.deposit(amount)
-        except Exception as e:
-            print(e)
-            return False
-
+        self.App.is_authenticated()
+        amount = input('Type the amount in U$ Dollars:  ')
+        self.App.user.account.deposit(amount)
         print('You successfully deposited ${} to your account.'.format(amount))
-
-        return True
 
     def withdraw(self):
         amount = 0
-        try:
-            self.App.is_authenticated()
-            amount = input('Type the amount in U$ Dollars:  ')
-            self.App.user.account.withdraw(amount)
-        except Exception as e:
-            print(e)
-            return False
-
+        self.App.is_authenticated()
+        amount = input('Type the amount in U$ Dollars:  ')
+        self.App.user.account.withdraw(amount)
         print('You successfully withdrew ${} from your account.'.format(amount))
-
-        return True
     
     def extract(self):
         self.App.is_authenticated()
