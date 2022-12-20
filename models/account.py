@@ -1,4 +1,5 @@
 import locale
+from models.history import History
 class Account:
     total_accounts = 0
 
@@ -7,10 +8,15 @@ class Account:
         self.__id = Account.total_accounts
         self.__User = User
         self.__amount = float(amount)
+        self.__History = History()
          
     @property
     def id(self):
         return self.__id
+    
+    @property
+    def history(self):
+        return self.__History
     
     def extract(self):
         return 'Actual amount: {}'.format(self.__format_amount(self.__amount))

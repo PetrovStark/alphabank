@@ -13,7 +13,8 @@ class Controller(object):
             'logout': self.logout,
             'deposit': self.deposit,
             'withdraw': self.withdraw,
-            'extract': self.extract
+            'extract': self.extract,
+            'history': self.history
         }
 
         if (procedure not in procedures):
@@ -27,6 +28,7 @@ class Controller(object):
         password = input('Your password: ')
         user = User(name, email, password)
         user.register(user)
+        user.account.history.add('Was created.')
 
         print('\nWelcome to Alphabank, {}!'.format(user.name))
 
@@ -39,11 +41,13 @@ class Controller(object):
         email = input('Your e-mail:  ')
         password = input('Your password:  ')
         self.App.user = User.login(email, password)
+        self.App.user.account.history.add('Logged in.')
         print('Hi, {}!'.format(self.App.user.name))
         
     def logout(self):
         self.App.is_authenticated()
         print('Bye, {}!'.format(self.App.user.name))
+        self.App.user.account.history.add('Logged out.')
         self.App.user = False
 
     def deposit(self):
@@ -51,18 +55,29 @@ class Controller(object):
         self.App.is_authenticated()
         amount = input('Type the amount in U$ Dollars:  ')
         self.App.user.account.deposit(amount)
-        print('You successfully deposited ${} to your account.'.format(amount))
+        feedback = 'You successfully deposited ${} to your account.'.format(amount)
+        self.App.user.account.history.add(feedback)
+        print(feedback)
 
     def withdraw(self):
         amount = 0
         self.App.is_authenticated()
         amount = input('Type the amount in U$ Dollars:  ')
         self.App.user.account.withdraw(amount)
-        print('You successfully withdrew ${} from your account.'.format(amount))
+        feedback = 'You successfully withdrew ${} from your account.'.format(amount)
+        self.App.user.account.history.add(feedback)
+        print(feedback)
     
     def extract(self):
         self.App.is_authenticated()
         print(self.App.user.account.extract())
+        self.App.user.account.history.add('Consulted your account\'s extract.')
+        self.App.user.account.history.show(limit=5)
+
+    def history(self):
+        self.App.is_authenticated()
+        self.App.user.account.history.add('Consulted your account\'s history.')
+        self.App.user.account.history.show()
     
     @staticmethod
     def help():

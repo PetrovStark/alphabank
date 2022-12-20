@@ -7,7 +7,7 @@ class User:
         self.__name = name
         self.__email = email
         self.__password = password
-        self.__account = Account(self, 0)
+        self.__Account = Account(self, 0)
     
     @property
     def name(self):
@@ -24,7 +24,7 @@ class User:
 
     @property
     def account(self):
-        return self.__account
+        return self.__Account
     
     @classmethod
     def login(self, email, password):
@@ -34,7 +34,7 @@ class User:
             elif user['password'] == password:
                 return user['instance']
             
-        raise Exception("Invalid email or password.")
+        raise Exception("Invalid email or password.\nIf you don\'t have an account, please register yourself by typing the \"register\" command.")
 
     def register(self, instance):
         User.__users.append({
