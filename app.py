@@ -15,7 +15,8 @@ class App:
     @user.setter
     def user(self, user):
         if not isinstance(user, User) and not isinstance(user, bool):
-            raise Exception('You cannot set this value to this attribute.')
+            raise Exception(
+                'You cannot set this value to this attribute.')
 
         self.__user = user
 
