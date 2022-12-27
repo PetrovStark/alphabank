@@ -3,14 +3,29 @@ from models.history import History
 
 
 class Account:
-    total_accounts = 0
+    __accounts = []
 
     def __init__(self, User, amount):
-        Account.total_accounts += 1
-        self.__id = Account.total_accounts
+        self.__id = len(Account.__accounts) + 1
         self.__User = User
         self.__amount = float(amount)
         self.__History = History()
+
+        Account.__accounts.append({
+            'id': self.__id,
+            'instance': self
+        })
+
+    @staticmethod
+    def get(id):
+        for account in Account.__accounts:
+            if account['id'] != id:
+                continue
+            
+            return account['instance']
+        
+        raise Exception(
+            'Account not found.')
 
     @property
     def id(self):
@@ -19,9 +34,16 @@ class Account:
     @property
     def history(self):
         return self.__History
-
+    
+    @property
+    def user(self):
+        return self.__User
+    
     def extract(self):
-        return 'Actual amount: {}'.format(self.__format_amount(self.__amount))
+        print('Account ID: {}'.format(self.__id))
+        print('Owner: {}'.format(self.__User.name))
+        print('Actual amount: {}'.format(self.__format_amount(self.__amount)))
+        self.__History.show(limit=5)
 
     def deposit(self, amount):
         amount = float(amount)
@@ -30,6 +52,7 @@ class Account:
                 'Transaction not authorized, you can only deposit values greater than US$0')
 
         self.__amount += amount
+        return True
 
     def withdraw(self, amount):
         amount = float(amount)
@@ -42,6 +65,7 @@ class Account:
                 'Transaction not authorized, you can only withdraw values greater than US$0')
 
         self.__amount -= amount
+        return True
 
     @staticmethod
     def __format_amount(amount):

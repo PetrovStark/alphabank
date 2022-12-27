@@ -1,9 +1,10 @@
 from models.user import User
+from models.account import Account
 
 
 class Controller(object):
-    def __init__(self, instance_App):
-        self.App = instance_App
+    def __init__(self, instanceApp):
+        self.App = instanceApp
 
     def execute_procedure(self, procedure):
         procedures = {
@@ -13,6 +14,7 @@ class Controller(object):
             'logout': self.logout,
             'deposit': self.deposit,
             'withdraw': self.withdraw,
+            'transfer': self.transfer,
             'extract': self.extract,
             'history': self.history
         }
@@ -53,7 +55,6 @@ class Controller(object):
         self.App.user = False
 
     def deposit(self):
-        amount = 0
         self.App.is_authenticated()
         amount = input('Type the amount in U$ Dollars:  ')
         self.App.user.account.deposit(amount)
@@ -63,7 +64,6 @@ class Controller(object):
         print(feedback)
 
     def withdraw(self):
-        amount = 0
         self.App.is_authenticated()
         amount = input('Type the amount in U$ Dollars:  ')
         self.App.user.account.withdraw(amount)
@@ -74,14 +74,61 @@ class Controller(object):
 
     def extract(self):
         self.App.is_authenticated()
-        print(self.App.user.account.extract())
+        self.App.user.account.extract()
         self.App.user.account.history.add('Consulted your account\'s extract.')
-        self.App.user.account.history.show(limit=5)
 
     def history(self):
         self.App.is_authenticated()
         self.App.user.account.history.add('Consulted your account\'s history.')
         self.App.user.account.history.show()
+
+    def transfer(self):
+        self.App.is_authenticated()
+        destinyAccount = False
+        source_withdrew = False
+        destiny_deposited = False
+        accountId = int(input('Type the destiny account ID:  '))
+        amount = float(input('Type the amount in U$ Dollars:  '))
+
+        try:
+            destinyAccount = Account.get(accountId)
+            source_withdrew = self.App.user.account.withdraw(amount)
+            destiny_deposited = destinyAccount.deposit(amount)
+            feedback = 'Transferred ${} to "{}" (Account ID: {}).'.format(
+                amount,
+                destinyAccount.user.name,
+                destinyAccount.id)
+
+            self.App.user.account.history.add(feedback)
+            
+            destinyAccount.history.add(
+                'Received ${} from "{}" (Account ID: {}).'.format(
+                    amount,
+                    self.App.user.account.user.name,
+                    self.App.user.account.id))
+            
+            print(feedback)
+
+        except Exception as e:
+            if bool(destiny_deposited):
+                destinyAccount.withdraw(amount)
+
+            if bool(source_withdrew):
+                self.App.user.account.deposit(amount)
+            
+            if bool(destinyAccount):
+                self.App.user.account.history.add(
+                    'Tried to transfer ${} to "{}" (Account ID: {}), but failed due to this error: {}'.format(
+                        amount,
+                        destinyAccount.user.name,
+                        destinyAccount.id,
+                        str(e)))
+            else :
+                self.App.user.account.history.add(
+                    'Tried to transfer ${}, but destiny account was not found.'.format(amount))
+
+            raise Exception(
+                'Transference error: {}'.format(str(e)))
 
     @staticmethod
     def help():
