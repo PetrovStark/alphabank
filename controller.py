@@ -84,51 +84,10 @@ class Controller(object):
 
     def transfer(self):
         self.App.is_authenticated()
-        destinyAccount = False
-        source_withdrew = False
-        destiny_deposited = False
         accountId = int(input('Type the destiny account ID:  '))
         amount = float(input('Type the amount in U$ Dollars:  '))
-
-        try:
-            destinyAccount = Account.get(accountId)
-            source_withdrew = self.App.user.account.withdraw(amount)
-            destiny_deposited = destinyAccount.deposit(amount)
-            feedback = 'Transferred ${} to "{}" (Account ID: {}).'.format(
-                amount,
-                destinyAccount.user.name,
-                destinyAccount.id)
-
-            self.App.user.account.history.add(feedback)
-            
-            destinyAccount.history.add(
-                'Received ${} from "{}" (Account ID: {}).'.format(
-                    amount,
-                    self.App.user.account.user.name,
-                    self.App.user.account.id))
-            
-            print(feedback)
-
-        except Exception as e:
-            if bool(destiny_deposited):
-                destinyAccount.withdraw(amount)
-
-            if bool(source_withdrew):
-                self.App.user.account.deposit(amount)
-            
-            if bool(destinyAccount):
-                self.App.user.account.history.add(
-                    'Tried to transfer ${} to "{}" (Account ID: {}), but failed due to this error: {}'.format(
-                        amount,
-                        destinyAccount.user.name,
-                        destinyAccount.id,
-                        str(e)))
-            else :
-                self.App.user.account.history.add(
-                    'Tried to transfer ${}, but destiny account was not found.'.format(amount))
-
-            raise Exception(
-                'Transference error: {}'.format(str(e)))
+        
+        self.App.user.account.transfer(amount, accountId)
 
     @staticmethod
     def help():

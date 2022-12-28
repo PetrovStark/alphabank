@@ -66,6 +66,52 @@ class Account:
 
         self.__amount -= amount
         return True
+    
+    def transfer(self, amount, accountId):
+        destiny = False
+        withdrew = False
+        deposited = False
+
+        try:
+            destiny = Account.get(accountId)
+            if destiny.id == self.id:
+                raise Exception('You cannot transfer money to your own account.')
+            
+            withdrew = self.withdraw(amount)
+            deposited = destiny.deposit(amount)
+
+            self.history.add(
+                'Transferred ${} to "{}" (Account ID: {}).'.format(
+                    amount,
+                    destiny.user.name,
+                    destiny.id))
+            
+            destiny.history.add(
+                'Received ${} from "{}" (Account ID: {}).'.format(
+                    amount,
+                    self.user.name,
+                    self.id))
+
+        except Exception as e:
+            if bool(deposited):
+                destiny.withdraw(amount)
+
+            if bool(withdrew):
+                self.deposit(amount)
+            
+            if bool(destiny):
+                self.history.add(
+                    'Tried to transfer ${} to "{}" (Account ID: {}), but failed due to this error: {}'.format(
+                        amount,
+                        destiny.user.name,
+                        destiny.id,
+                        str(e)))
+            else :
+                self.history.add(
+                    'Tried to transfer ${}, but destiny account was not found.'.format(amount))
+
+            raise Exception(
+                'Transference error: {}'.format(str(e)))
 
     @staticmethod
     def __format_amount(amount):
