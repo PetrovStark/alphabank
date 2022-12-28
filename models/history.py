@@ -11,18 +11,15 @@ class History(object):
         self.__transactions.append(message)
 
     def show(self, order='DESC', limit=10):
-        transactions = self.__transactions[:limit]
         if order == 'DESC':
             order_message = 'Last'
-            transactions.reverse()
+            transactions = self.__transactions[::-1][:limit]
         elif order == 'ASC':
             order_message = 'First'
+            transactions = self.__transactions[:limit]
 
         print('{} {} transactions:'.format(order_message, len(transactions)))
         counter = 0
         for transaction in transactions:
-            if limit <= counter:
-                break
-
             print(transaction)
             counter += 1

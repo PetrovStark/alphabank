@@ -21,9 +21,9 @@ class Account:
         for account in Account.__accounts:
             if account['id'] != id:
                 continue
-            
+
             return account['instance']
-        
+
         raise Exception(
             'Account not found.')
 
@@ -34,11 +34,11 @@ class Account:
     @property
     def history(self):
         return self.__History
-    
+
     @property
     def user(self):
         return self.__User
-    
+
     def extract(self):
         print('Account ID: {}'.format(self.__id))
         print('Owner: {}'.format(self.__User.name))
@@ -66,31 +66,37 @@ class Account:
 
         self.__amount -= amount
         return True
-    
+
     def transfer(self, amount, accountId):
         destiny = False
         withdrew = False
         deposited = False
 
         try:
-            destiny = Account.get(accountId)
-            if destiny.id == self.id:
-                raise Exception('You cannot transfer money to your own account.')
-            
             withdrew = self.withdraw(amount)
+
+            destiny = Account.get(accountId)
+
+            if destiny.id == self.id:
+                raise Exception(
+                    'You cannot transfer money to your own account.')
+
             deposited = destiny.deposit(amount)
 
-            self.history.add(
-                'Transferred ${} to "{}" (Account ID: {}).'.format(
-                    amount,
-                    destiny.user.name,
-                    destiny.id))
-            
+            feedback = 'Transferred ${} to "{}" (Account ID: {}).'.format(
+                amount,
+                destiny.user.name,
+                destiny.id)
+
+            self.history.add(feedback)
+
             destiny.history.add(
                 'Received ${} from "{}" (Account ID: {}).'.format(
                     amount,
                     self.user.name,
                     self.id))
+
+            print(feedback)
 
         except Exception as e:
             if bool(deposited):
@@ -98,7 +104,7 @@ class Account:
 
             if bool(withdrew):
                 self.deposit(amount)
-            
+
             if bool(destiny):
                 self.history.add(
                     'Tried to transfer ${} to "{}" (Account ID: {}), but failed due to this error: {}'.format(
@@ -106,7 +112,7 @@ class Account:
                         destiny.user.name,
                         destiny.id,
                         str(e)))
-            else :
+            else:
                 self.history.add(
                     'Tried to transfer ${}, but destiny account was not found.'.format(amount))
 

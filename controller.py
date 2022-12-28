@@ -79,8 +79,8 @@ class Controller(object):
 
     def history(self):
         self.App.is_authenticated()
-        self.App.user.account.history.add('Consulted your account\'s history.')
         self.App.user.account.history.show()
+        self.App.user.account.history.add('Consulted your account\'s history.')
 
     def transfer(self):
         self.App.is_authenticated()
