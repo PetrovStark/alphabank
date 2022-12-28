@@ -5,25 +5,55 @@ from models.account import Account
 class Controller(object):
     def __init__(self, instanceApp):
         self.App = instanceApp
+        self.procedures = {
+            'help': {
+                'description': 'Shows all the available procedures',
+                'method': self.help
+            },
+            'register': {
+                'description': 'Register a new account.',
+                'method': self.register
+            },
+            'login': {
+                'description': 'Log in to your account.',
+                'method': self.login
+            },
+            'logout': {
+                'description': 'Log out from your account.',
+                'method': self.logout
+            },
+            'deposit': {
+                'description': 'Deposit a certain amount in your account.',
+                'method':self.deposit
+            },
+            'withdraw': {
+                'description': 'Withdraw a certain amount from your account.',
+                'method': self.withdraw
+            },
+            'transfer': {
+                'description': 'Transfer a certain amont to another account.',
+                'method': self.transfer
+            },
+            'extract': {
+                'description': 'See your account\'s current status.',
+                'method': self.extract
+            },
+            'history': {
+                'description': 'See your account\'s last transactions',
+                'method': self.history
+            },
 
-    def execute_procedure(self, procedure):
-        procedures = {
-            'help': Controller.help,
-            'register': self.register,
-            'login': self.login,
-            'logout': self.logout,
-            'deposit': self.deposit,
-            'withdraw': self.withdraw,
-            'transfer': self.transfer,
-            'extract': self.extract,
-            'history': self.history
+            'exit': {
+                'description': 'Exit the application.'
+            }
         }
 
-        if (procedure not in procedures):
+    def execute_procedure(self, procedure):
+        if (procedure not in self.procedures):
             raise Exception(
                 'Procedure not found, please try again. (Type "help" to see all available procedures)')
 
-        procedures[procedure]()
+        self.procedures[procedure]['method']()
 
     def register(self):
         name = input('Your name: ')
@@ -89,11 +119,16 @@ class Controller(object):
         
         self.App.user.account.transfer(amount, accountId)
 
-    @staticmethod
-    def help():
+    def help(self):
         procedures = [func for func in dir(Controller) if callable(
             getattr(Controller, func)) and not func.startswith("_")]
         # Adding the exit procedure, which not has a method.
-        procedures.append('exit')
         procedures.remove('execute_procedure')
-        print(procedures)
+
+        for procedure in procedures:
+            procedure_show = '\n"{}"'.format(str(procedure))
+
+            if 'description' in self.procedures[procedure] :
+                procedure_show += " - {}".format(self.procedures[procedure]['description'])
+            
+            print(procedure_show)
