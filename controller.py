@@ -56,12 +56,18 @@ class Controller(object):
         self.procedures[procedure]['method']()
 
     def register(self):
+        if (self.App.user != False):
+            raise Exception(
+                'You are already logged in.\nTo register another account, you must log out of this one by typing "logout" command.')
+
         name = input('Your name: ')
         email = input('Your email:  ')
         password = input('Your password: ')
         user = User(name, email, password)
         user.register(user)
         user.account.history.add('Was created.')
+        
+        self.App.user = User.login(email, password)
 
         print('\nWelcome to Alphabank, {}!'.format(user.name))
 
