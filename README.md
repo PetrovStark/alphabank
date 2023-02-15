@@ -1,6 +1,6 @@
 # Alphabank
 
-A bank system created for my object-oriented programming studies.
+A bank system created to learn object-oriented programming in Python
 
 ## How to use
 ```shell
